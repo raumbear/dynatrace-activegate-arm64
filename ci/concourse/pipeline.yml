@@ -1,0 +1,43 @@
+resources:
+- name: activegate-arm64-repo
+  type: git
+  source:
+    uri: https://github.com/rraumberger/dynatrace-activegate-arm64.git
+    branch: main
+    icon: github
+
+- name: activegate-arm64-image
+  type: registry-image
+  icon: docker
+  source:
+    repository: ((image_repo_name))/dynatrace-activegate
+    tag: ((dynatrace_activegate_version))
+
+jobs:
+- name: build-activegate-image
+  plan:
+  - get: activegate-arm64-repo
+    trigger: true
+  - task: build-image
+    privileged: true # oci-build-task must run in a privileged container
+    config:
+      platform: linux
+      image_resource:
+        type: registry-image
+        source:
+          repository: rdclda/concourse-oci-build-task
+      params:
+        CONTEXT: activegate-arm64-repo
+        BUILD_ARG_DYNATRACE_ENVIRONMENT_URL: ((dynatrace_environment))
+        BUILD_ARG_DYNATRACE_PAAS_TOKEN: ((dynatrace_paas_token))
+        BUILD_ARG_DYNATRACE_AG_VERSION: ((dynatrace_activegate_version))
+        IMAGE_PLATFORM: ((image_platform))
+      inputs:
+      - name: activegate-arm64-repo
+      outputs:
+      - name: image
+      run:
+        path: build
+  - put: activegate-arm64-image
+    params:
+      image: image/image.tar
