@@ -12,7 +12,8 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN wget --quiet "${DYNATRACE_ENVIRONMENT_URL}/api/v1/deployment/installer/gateway/unix/version/${DYNATRACE_AG_VERSION}?arch=x86" --header="Authorization: Api-Token ${DYNATRACE_PAAS_TOKEN}" -O activegateInstaller.sh
-RUN sh activegateInstaller.sh -s INSTALL=/ag/install CONFIG=/ag/config PACKAGES_DIR=/ag/packages \
+RUN sed -i 's/readonly TARGET_ARCH="x86_64"/readonly TARGET_ARCH="aarch64"/' activegateInstaller.sh \
+    && sh activegateInstaller.sh -s INSTALL=/ag/install CONFIG=/ag/config PACKAGES_DIR=/ag/packages \
     && rm activegateInstaller.sh
 
 # Delete bundled JRE and Native Libs
