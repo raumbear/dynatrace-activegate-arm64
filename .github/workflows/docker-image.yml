@@ -12,19 +12,23 @@ jobs:
         uses: hashicorp/vault-action@v2.4.0
         with:
           url: https://vault.lab.raumberger.net
-          token: ${{ secrets.VAULT_TOKEN }}
+          token: \${{ secrets.VAULT_TOKEN }}
           secrets: |
             secret/data/ci/dynatrace environment | DYNATRACE_ENVIRONMENT_URL ;
             secret/data/ci/dynatrace paas_token | DYNATRACE_PAAS_TOKEN
       - name: Fetch latest Active Gate version
         run: |
           echo -n 'DYNATRACE_ACTIVE_GATE_VERSION=' >> $GITHUB_ENV
-          curl "${DYNATRACE_ENVIRONMENT_URL}/api/v1/deployment/installer/gateway/versions/unix?arch=all" -H  "accept: application/json" -H  "Authorization: Api-Token ${DYNATRACE_PAAS_TOKEN}" --silent | jq '.availableVersions[0]' -c -r >> $GITHUB_ENV
+          curl "\${{ env.DYNATRACE_ENVIRONMENT_URL }}/api/v1/deployment/installer/gateway/versions/unix?arch=all" -H  "accept: application/json" -H  "Authorization: Api-Token \${{ env.DYNATRACE_PAAS_TOKEN }}" --silent | jq '.availableVersions[0]' -c -r >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - name: Build and Push the Docker Image
         run: |
-          echo "export DYNATRACE_ENVIRONMENT_URL=${{ env.DYNATRACE_ENVIRONMENT_URL }}" > seed.env
-          echo "export DYNATRACE_AG_VERSION=${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}" >> seed.env
-          echo "export DYNATRACE_PAAS_TOKEN=${{ env.DYNATRACE_PAAS_TOKEN }}" >> seed.env
+          echo "export DYNATRACE_ENVIRONMENT_URL=\${{ env.DYNATRACE_ENVIRONMENT_URL }}" > seed.env
+          echo "export DYNATRACE_AG_VERSION=\${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}" >> seed.env
+          echo "export DYNATRACE_PAAS_TOKEN=\${{ env.DYNATRACE_PAAS_TOKEN }}" >> seed.env
           echo "export IMAGE_NAME='registry.lab.raumberger.net/dynatrace-activegate'" >> seed.env
           sh buildArm64.sh
+      - name: Update Nomad Definition
+        run: sed 's/VERSION/\${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}/' activegate.nomad | nomad run -
+        env:
+          NOMAD_ADDR: https://nomad.lab.raumberger.net
