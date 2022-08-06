@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    runs-on: ["homelab", "ARM64", "rpi"]
+    runs-on: [self-hosted, homelab, ARM64, rpi]
     steps:
       - name: Import Secrets
         uses: hashicorp/vault-action@v2.4.0
