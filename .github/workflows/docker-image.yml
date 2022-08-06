@@ -19,7 +19,7 @@ jobs:
       - name: Fetch latest Active Gate version
         run: |
           echo -n 'DYNATRACE_ACTIVE_GATE_VERSION=' >> $GITHUB_ENV
-          curl "\${{ env.DYNATRACE_ENVIRONMENT_URL }}/api/v1/deployment/installer/gateway/versions/unix?arch=all" -H  "accept: application/json" -H  "Authorization: Api-Token \${{ env.DYNATRACE_PAAS_TOKEN }}" --silent | jq '.availableVersions[0]' -c -r >> $GITHUB_ENV
+          curl "\${{ env.DYNATRACE_ENVIRONMENT_URL }}/api/v1/deployment/installer/gateway/versions/unix?arch=all" -H  "accept: application/json" -H  "Authorization: Api-Token \${{ env.DYNATRACE_PAAS_TOKEN }}" --fail | jq '.availableVersions[0]' -c -r >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - name: Build and Push the Docker Image
         run: |
