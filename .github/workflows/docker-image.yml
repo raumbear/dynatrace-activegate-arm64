@@ -14,8 +14,8 @@ jobs:
           url: https://vault.lab.raumberger.net
           token: \${{ secrets.VAULT_TOKEN }}
           secrets: |
-            ci/data/dynatrace environment_url | DYNATRACE_ENVIRONMENT_URL ;
-            ci/data/dynatrace paas_token | DYNATRACE_PAAS_TOKEN
+            secret/ci/dynatrace environment_url | DYNATRACE_ENVIRONMENT_URL ;
+            secret/ci/dynatrace paas_token | DYNATRACE_PAAS_TOKEN
       - name: Fetch latest Active Gate version
         run: |
           echo -n 'DYNATRACE_ACTIVE_GATE_VERSION=' >> $GITHUB_ENV
