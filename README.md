@@ -21,4 +21,3 @@ This triggers a Docker `buildx` build with `linux/arm64` as the target platform.
 ### How to find the Dynatrace Activegate version
 
 Refer to https://www.dynatrace.com/support/help/dynatrace-api/environment-api/deployment/activegate/get-activegate-versions/
-
