@@ -1,7 +1,6 @@
 # Dynatrace Activegate for Arm64
 
 This repository is primarly used by myself to create an Activegate container for my homelab.
-
 Feel free to use these resources but don't expect continued maintenance.
 
 ## How to build
