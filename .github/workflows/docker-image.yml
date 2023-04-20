@@ -31,7 +31,7 @@ jobs:
       - name: Update version in Nomad definition
         env:
           DYNATRACE_ACTIVE_GATE_VERSION: ${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}
-        run: sed "s/VERSION/${DYNATRACE_ACTIVE_GATE_VERSION}/" activegate.nomad
+        run: sed -i "s/VERSION/${DYNATRACE_ACTIVE_GATE_VERSION}/" activegate.nomad
       - name: Update Nomad Definition
         run: nomad run activegate.nomad
         env:
