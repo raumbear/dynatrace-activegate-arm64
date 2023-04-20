@@ -23,11 +23,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build and Push the Docker Image
         run: |
-          echo "export DYNATRACE_ENVIRONMENT_URL=${{ env.DYNATRACE_ENVIRONMENT_URL }}" > seed.env
-          echo "export DYNATRACE_AG_VERSION=${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}" >> seed.env
-          echo "export DYNATRACE_PAAS_TOKEN=${{ env.DYNATRACE_PAAS_TOKEN }}" >> seed.env
-          echo "export IMAGE_NAME='registry.lab.raumberger.net/dynatrace-activegate'" >> seed.env
-          sh buildArm64.sh
+          export DYNATRACE_ENVIRONMENT_URL=${{ env.DYNATRACE_ENVIRONMENT_URL }}
+          export DYNATRACE_AG_VERSION=${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}
+          export DYNATRACE_PAAS_TOKEN=${{ env.DYNATRACE_PAAS_TOKEN }}
+          export IMAGE_NAME='registry.lab.raumberger.net/dynatrace-activegate'
+          ./buildArm64.sh
       - name: Update Nomad Definition
         run: sed 's/VERSION/${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}/' activegate.nomad | nomad run -
         env:
