@@ -22,13 +22,17 @@ jobs:
           curl "${{ env.DYNATRACE_ENVIRONMENT_URL }}/api/v1/deployment/installer/gateway/versions/unix?arch=all" -H  "accept: application/json" -H  "Authorization: Api-Token ${{ env.DYNATRACE_PAAS_TOKEN }}" --fail | jq '.availableVersions[0]' -c -r >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - name: Build and Push the Docker Image
-        run: |
-          export DYNATRACE_ENVIRONMENT_URL=${{ env.DYNATRACE_ENVIRONMENT_URL }}
-          export DYNATRACE_AG_VERSION=${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}
-          export DYNATRACE_PAAS_TOKEN=${{ env.DYNATRACE_PAAS_TOKEN }}
-          export IMAGE_NAME='registry.lab.raumberger.net/dynatrace-activegate'
-          ./buildArm64.sh
+        env:
+          DYNATRACE_ENVIRONMENT_URL: ${{ env.DYNATRACE_ENVIRONMENT_URL }}
+          DYNATRACE_AG_VERSION: ${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}
+          DYNATRACE_PAAS_TOKEN: ${{ env.DYNATRACE_PAAS_TOKEN }}
+          IMAGE_NAME: registry.lab.raumberger.net/dynatrace-activegate
+        run: ./buildArm64.sh
+      - name: Update version in Nomad definition
+        env:
+          DYNATRACE_ACTIVE_GATE_VERSION: ${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}
+        run: sed "s/VERSION/${DYNATRACE_ACTIVE_GATE_VERSION}/" activegate.nomad
       - name: Update Nomad Definition
-        run: sed 's/VERSION/${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}/' activegate.nomad | nomad run -
+        run: nomad run activegate.nomad
         env:
           NOMAD_ADDR: https://nomad.lab.raumberger.net
