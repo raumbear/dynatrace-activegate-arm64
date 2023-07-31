@@ -33,6 +33,6 @@ jobs:
           DYNATRACE_ACTIVE_GATE_VERSION: ${{ env.DYNATRACE_ACTIVE_GATE_VERSION }}
         run: sed -i "s/VERSION/${DYNATRACE_ACTIVE_GATE_VERSION}/" activegate.nomad
       - name: Update Nomad Definition
-        run: nomad run activegate.nomad
+        run: nomad run -no-color -detach activegate.nomad
         env:
           NOMAD_ADDR: https://nomad.lab.raumberger.net
