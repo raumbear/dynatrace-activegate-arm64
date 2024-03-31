@@ -1,14 +1,14 @@
 FROM ubuntu:latest
 
-ARG SNAPPY_VERSION="1.1.8.4"
-ARG ZSTD_VERSION="1.5.0-4"
+ARG SNAPPY_VERSION="1.1.10.5"
+ARG ZSTD_VERSION="1.5.6-1"
 ARG DYNATRACE_ENVIRONMENT_URL
 ARG DYNATRACE_PAAS_TOKEN
 ARG DYNATRACE_AG_VERSION
 
 RUN apt-get update \
     && apt-get upgrade -y \
-    && apt-get install wget unzip openjdk-11-jre -y \
+    && apt-get install wget unzip openjdk-17-jre -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN wget --quiet "${DYNATRACE_ENVIRONMENT_URL}/api/v1/deployment/installer/gateway/unix/version/${DYNATRACE_AG_VERSION}?arch=x86" --header="Authorization: Api-Token ${DYNATRACE_PAAS_TOKEN}" -O activegateInstaller.sh
